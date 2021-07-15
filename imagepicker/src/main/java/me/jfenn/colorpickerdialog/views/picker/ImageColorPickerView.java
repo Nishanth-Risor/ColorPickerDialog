@@ -156,6 +156,12 @@ public class ImageColorPickerView extends PickerView<ImageColorPickerView.ImageS
         }
 
         postInvalidate();
+        if(event.getAction()==MotionEvent.ACTION_DOWN){
+            hideBottomView();
+        }
+        if(event.getAction()==MotionEvent.ACTION_UP){
+            showBottomView();
+        }
 
         if (event.getAction() == MotionEvent.ACTION_UP) {
             int x = getBitmapX(event.getX()), y = getBitmapY(event.getY());
@@ -168,7 +174,12 @@ public class ImageColorPickerView extends PickerView<ImageColorPickerView.ImageS
 
         return super.onTouchEvent(event);
     }
+    public void hideBottomView(){
 
+    }
+    public void showBottomView(){
+
+    }
     @Override
     public void draw(Canvas canvas) {
         super.draw(canvas);
