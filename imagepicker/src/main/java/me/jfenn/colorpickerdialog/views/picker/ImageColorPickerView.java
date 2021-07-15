@@ -53,7 +53,7 @@ public class ImageColorPickerView extends PickerView<ImageColorPickerView.ImageS
         x = new AnimatedInteger(-1);
         y = new AnimatedInteger(-1);
 
-        circleWidth = DimenUtilsKt.dpToPx(18);
+        circleWidth = DimenUtilsKt.dpToPx(25);
 
         paint = new Paint();
         paint.setDither(true);
