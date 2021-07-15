@@ -174,10 +174,10 @@ public class ImageColorPickerView extends PickerView<ImageColorPickerView.ImageS
 
         return super.onTouchEvent(event);
     }
-    public void hideBottomView(){
+    static public void hideBottomView(){
 
     }
-    public void showBottomView(){
+    static public void showBottomView(){
 
     }
     @Override
