@@ -147,7 +147,6 @@ public class ImageColorPickerView extends PickerView<ImageColorPickerView.ImageS
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        hideBottomViewIfNeeded();
         if (x.val() >= 0 && y.val() > 0) {
             x.to((int) event.getX());
             y.to((int) event.getY());
@@ -168,9 +167,6 @@ public class ImageColorPickerView extends PickerView<ImageColorPickerView.ImageS
         }
 
         return super.onTouchEvent(event);
-    }
-    public void hideBottomViewIfNeeded() {
-
     }
 
     @Override
