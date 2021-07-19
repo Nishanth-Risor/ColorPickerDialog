@@ -6,6 +6,8 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.graphics.Path;
+import android.graphics.Rect;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.AttributeSet;
@@ -69,7 +71,7 @@ public class ImageColorPickerView extends PickerView<ImageColorPickerView.ImageS
 
         strokePaint = new Paint();
         strokePaint.setStyle(Paint.Style.STROKE);
-        strokePaint.setStrokeWidth(DimenUtilsKt.dpToPx(2));
+        strokePaint.setStrokeWidth(DimenUtilsKt.dpToPx(5));
         strokePaint.setAntiAlias(true);
 
         bitmapMatrix = new Matrix();
@@ -179,15 +181,15 @@ public class ImageColorPickerView extends PickerView<ImageColorPickerView.ImageS
                      x.to((int)event.getX());
                      y.to((int)event.getY());
                  }
+                 
+        }
+
                  int x = getBitmapX(this.x.val()), y = getBitmapY(this.y.val());
                  if (x >= 0 && x < bitmap.getWidth() && y >= 0 && y < bitmap.getHeight()) {
                      color = bitmap.getPixel(x, y);
                      color = Color.argb(255, Color.red(color), Color.green(color), Color.blue(color));
                      onColorPicked(this, color);
                  }
-
-        }
-
 
         postInvalidate();
 
@@ -211,8 +213,14 @@ public class ImageColorPickerView extends PickerView<ImageColorPickerView.ImageS
                 fillPaint.setColor(color);
                 strokePaint.setColor(ColorUtils.isColorDark(color) ? Color.WHITE : Color.BLACK);
 
-                canvas.drawCircle(this.x.val(), this.y.val(), circleWidth, fillPaint);
+                //canvas.drawCircle(this.x.val(), this.y.val(), circleWidth, fillPaint);
                 canvas.drawCircle(this.x.val(), this.y.val(), circleWidth, strokePaint);
+                Path path = new Path();
+                path.addCircle(this.x.val(),this.y.val(), circleWidth, Path.Direction.CCW);
+                canvas.clipPath(path);
+                Rect srcRect=new Rect(x-1, y-1, x+2, y+2);
+                Rect destRect=new Rect(this.x.val()-circleWidth,this.y.val()-circleWidth , this.x.val()+circleWidth, this.y.val()+circleWidth );
+                canvas.drawBitmap(bitmap, srcRect, destRect, null);
 
             }
 
