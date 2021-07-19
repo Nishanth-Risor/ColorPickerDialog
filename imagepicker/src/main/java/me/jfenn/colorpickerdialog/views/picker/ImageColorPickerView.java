@@ -26,6 +26,7 @@ public class ImageColorPickerView extends PickerView<ImageColorPickerView.ImageS
     private AnimatedInteger x, y;
     private int circleWidth;
     private int color;
+    private boolean isActionUp=false;
 
     private ImageState restoreState;
 
@@ -53,7 +54,7 @@ public class ImageColorPickerView extends PickerView<ImageColorPickerView.ImageS
         x = new AnimatedInteger(-1);
         y = new AnimatedInteger(-1);
 
-        circleWidth = DimenUtilsKt.dpToPx(25);
+        circleWidth = DimenUtilsKt.dpToPx(30);
 
         paint = new Paint();
         paint.setDither(true);
@@ -147,6 +148,8 @@ public class ImageColorPickerView extends PickerView<ImageColorPickerView.ImageS
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+        if(event.getAction()==MotionEvent.ACTION_UP)isActionUp=true;
+        else isActionUp=false;
         if (x.val() >= 0 && y.val() > 0) {
             x.to((int) event.getX());
             y.to((int) event.getY());
@@ -173,8 +176,8 @@ public class ImageColorPickerView extends PickerView<ImageColorPickerView.ImageS
         super.draw(canvas);
 
         if (bitmap != null) {
-            x.next(true, 50);
-            y.next(true, 50);
+            x.next(true, 0);
+            y.next(true, 0);
 
             canvas.drawBitmap(bitmap, bitmapMatrix, paint);
 
@@ -186,8 +189,13 @@ public class ImageColorPickerView extends PickerView<ImageColorPickerView.ImageS
                 fillPaint.setColor(color);
                 strokePaint.setColor(ColorUtils.isColorDark(color) ? Color.WHITE : Color.BLACK);
 
-                canvas.drawCircle(this.x.val(), this.y.val(), circleWidth, fillPaint);
-                canvas.drawCircle(this.x.val(), this.y.val(), circleWidth, strokePaint);
+                if(isActionUp) {
+                    canvas.drawCircle(this.x.val(), this.y.val() , circleWidth, fillPaint);
+                    canvas.drawCircle(this.x.val(), this.y.val() , circleWidth, strokePaint);
+                }else{
+                    canvas.drawCircle(this.x.val(), this.y.val() - 150, circleWidth, fillPaint);
+                    canvas.drawCircle(this.x.val(), this.y.val() - 150, circleWidth, strokePaint);
+                }
             }
 
             if (!this.x.isTarget() || !this.y.isTarget())
