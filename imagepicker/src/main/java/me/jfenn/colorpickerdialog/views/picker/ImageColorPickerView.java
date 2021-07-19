@@ -26,7 +26,9 @@ public class ImageColorPickerView extends PickerView<ImageColorPickerView.ImageS
     private AnimatedInteger x, y;
     private int circleWidth;
     private int color;
-    private boolean isActionUp=false;
+
+    float lastX = 0, lastY = 0;
+    boolean isClick =false;
 
     private ImageState restoreState;
 
@@ -148,26 +150,46 @@ public class ImageColorPickerView extends PickerView<ImageColorPickerView.ImageS
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        if(event.getAction()==MotionEvent.ACTION_UP)isActionUp=true;
-        else isActionUp=false;
-        if (x.val() >= 0 && y.val() > 0) {
-            x.to((int) event.getX());
-            y.to((int) event.getY());
-        } else {
+
+        if(!(x.val() >= 0 && y.val() > 0)){
             x.setCurrent((int) event.getX());
-            y.setCurrent((int) event.getY());
+            y.setCurrent((int) event.getX());
         }
+        switch (event.getAction()) {
+            case (MotionEvent.ACTION_DOWN):
+                isClick=true;
+                lastX = event.getX();
+                lastY =event.getY();
+
+                break;
+            case MotionEvent.ACTION_MOVE:
+
+                float dx = event.getX() - lastX;
+                float dy = event.getY() - lastY;
+                if(Math.abs(dx)>1f || Math.abs(dy)>1f)isClick =false;
+                float finalX = this.x.val() + dx;
+                float finalY = this.y.val() + dy;
+                x.to((int)finalX);
+                y.to((int)finalY);
+                lastX=event.getX();
+                lastY=event.getY();
+                break;
+             case MotionEvent.ACTION_UP:
+                 if(isClick) {
+                     x.to((int)event.getX());
+                     y.to((int)event.getY());
+                 }
+                 int x = getBitmapX(this.x.val()), y = getBitmapY(this.y.val());
+                 if (x >= 0 && x < bitmap.getWidth() && y >= 0 && y < bitmap.getHeight()) {
+                     color = bitmap.getPixel(x, y);
+                     color = Color.argb(255, Color.red(color), Color.green(color), Color.blue(color));
+                     onColorPicked(this, color);
+                 }
+
+        }
+
 
         postInvalidate();
-
-        if (event.getAction() == MotionEvent.ACTION_UP) {
-            int x = getBitmapX(event.getX()), y = getBitmapY(event.getY());
-            if (x >= 0 && x < bitmap.getWidth() && y >= 0 && y < bitmap.getHeight()) {
-                color = bitmap.getPixel(x, y);
-                color = Color.argb(255, Color.red(color), Color.green(color), Color.blue(color));
-                onColorPicked(this, color);
-            }
-        }
 
         return super.onTouchEvent(event);
     }
@@ -189,13 +211,9 @@ public class ImageColorPickerView extends PickerView<ImageColorPickerView.ImageS
                 fillPaint.setColor(color);
                 strokePaint.setColor(ColorUtils.isColorDark(color) ? Color.WHITE : Color.BLACK);
 
-                if(isActionUp) {
-                    canvas.drawCircle(this.x.val(), this.y.val() , circleWidth, fillPaint);
-                    canvas.drawCircle(this.x.val(), this.y.val() , circleWidth, strokePaint);
-                }else{
-                    canvas.drawCircle(this.x.val(), this.y.val() - 150, circleWidth, fillPaint);
-                    canvas.drawCircle(this.x.val(), this.y.val() - 150, circleWidth, strokePaint);
-                }
+                canvas.drawCircle(this.x.val(), this.y.val(), circleWidth, fillPaint);
+                canvas.drawCircle(this.x.val(), this.y.val(), circleWidth, strokePaint);
+
             }
 
             if (!this.x.isTarget() || !this.y.isTarget())
