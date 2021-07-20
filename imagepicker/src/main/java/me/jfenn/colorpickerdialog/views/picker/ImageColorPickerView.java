@@ -34,7 +34,7 @@ public class ImageColorPickerView extends PickerView<ImageColorPickerView.ImageS
 
     private ImageState restoreState;
 
-    private Paint paint, fillPaint, strokePaint;
+    private Paint paint, fillPaint, strokePaint, strokeInnerPaint;
     private Matrix bitmapMatrix;
 
     public ImageColorPickerView(Context context) {
@@ -58,7 +58,7 @@ public class ImageColorPickerView extends PickerView<ImageColorPickerView.ImageS
         x = new AnimatedInteger(-1);
         y = new AnimatedInteger(-1);
 
-        circleWidth = DimenUtilsKt.dpToPx(30);
+        circleWidth = DimenUtilsKt.dpToPx(36);
 
         paint = new Paint();
         paint.setDither(true);
@@ -71,8 +71,13 @@ public class ImageColorPickerView extends PickerView<ImageColorPickerView.ImageS
 
         strokePaint = new Paint();
         strokePaint.setStyle(Paint.Style.STROKE);
-        strokePaint.setStrokeWidth(DimenUtilsKt.dpToPx(5));
+        strokePaint.setStrokeWidth(DimenUtilsKt.dpToPx(2));
         strokePaint.setAntiAlias(true);
+        
+        strokeInnerPaint = new Paint();
+        strokeInnerPaint.setStyle(Paint.Style.STROKE);
+        strokeInnerPaint.setStrokeWidth(DimenUtilsKt.dpToPx(1));
+        strokeInnerPaint.setAntiAlias(true);
 
         bitmapMatrix = new Matrix();
 
@@ -212,15 +217,16 @@ public class ImageColorPickerView extends PickerView<ImageColorPickerView.ImageS
 
                 fillPaint.setColor(color);
                 strokePaint.setColor(ColorUtils.isColorDark(color) ? Color.WHITE : Color.BLACK);
-
+                strokeInnerPaint.setColor(ColorUtils.isColorDark(color) ? Color.WHITE : Color.BLACK);
                 //canvas.drawCircle(this.x.val(), this.y.val(), circleWidth, fillPaint);
                 canvas.drawCircle(this.x.val(), this.y.val(), circleWidth, strokePaint);
                 Path path = new Path();
                 path.addCircle(this.x.val(),this.y.val(), circleWidth, Path.Direction.CCW);
                 canvas.clipPath(path);
-                Rect srcRect=new Rect(x-1, y-1, x+2, y+2);
+                Rect srcRect=new Rect(x-2, y-2, x+3, y+3);
                 Rect destRect=new Rect(this.x.val()-circleWidth,this.y.val()-circleWidth , this.x.val()+circleWidth, this.y.val()+circleWidth );
                 canvas.drawBitmap(bitmap, srcRect, destRect, null);
+                canvas.drawCircle(this.x.val(), this.y.val(), 15, strokeInnerPaint);
 
             }
 
