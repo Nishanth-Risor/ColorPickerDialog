@@ -223,7 +223,7 @@ public class ImageColorPickerView extends PickerView<ImageColorPickerView.ImageS
                 Path path = new Path();
                 path.addCircle(this.x.val(),this.y.val(), circleWidth, Path.Direction.CCW);
                 canvas.clipPath(path);
-                Rect srcRect=new Rect(x-2, y-2, x+3, y+3);
+                Rect srcRect=new Rect(x-14, y-14, x+15, y+15);
                 Rect destRect=new Rect(this.x.val()-circleWidth,this.y.val()-circleWidth , this.x.val()+circleWidth, this.y.val()+circleWidth );
                 canvas.drawBitmap(bitmap, srcRect, destRect, null);
                 canvas.drawCircle(this.x.val(), this.y.val(), 15, strokeInnerPaint);
